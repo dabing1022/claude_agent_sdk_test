@@ -3,17 +3,19 @@
 import asyncio
 
 from claude_agent_sdk import (
-    tool,
+    AssistantMessage,
+    ClaudeAgentOptions,
+    CLIConnectionError,
+    ResultMessage,
+    TextBlock,
     create_sdk_mcp_server,
     query,
-    ClaudeAgentOptions,
-    AssistantMessage,
-    TextBlock,
+    tool,
 )
 from dotenv import load_dotenv
 
-# 加载环境变量
-load_dotenv()
+# 加载环境变量(override=True 确保 .env 文件覆盖系统环境变量)
+load_dotenv(override=True)
 
 
 # 使用 @tool 装饰器定义计算器工具
@@ -84,6 +86,13 @@ async def divide_numbers(args: dict) -> dict:
     }
 
 
+def _is_transport_race_condition(exc: Exception) -> bool:
+    """检查是否是传输层关闭时的竞态条件错误（可以安全忽略）"""
+    if isinstance(exc, CLIConnectionError):
+        return "ProcessTransport is not ready for writing" in str(exc)
+    return False
+
+
 async def main() -> None:
     """运行工具示例"""
     # 创建 SDK MCP 服务器
@@ -95,26 +104,58 @@ async def main() -> None:
 
     # 配置选项
     options = ClaudeAgentOptions(
-        model="claude-sonnet-4-5-20250929",
+        # model="claude-sonnet-4-5-20250929",
+        # model="deepseek-chat",
         system_prompt="你是一个数学助手。使用提供的计算器工具来进行计算。",
-        mcp_servers={"calculator": calculator_server},
+        # mcp_servers={"calculator": calculator_server},
         # 允许使用这些工具
-        allowed_tools=["add", "multiply", "subtract", "divide"],
+        # allowed_tools=["add", "multiply", "subtract", "divide"],
     )
 
     print("正在询问 Claude 进行计算...")
 
     # 使用 query() 函数查询
-    async for message in query(
-        prompt="请计算 15.5 乘以 3.2 的结果是多少？",
-        options=options
-    ):
-        # 打印助手的回复
-        if isinstance(message, AssistantMessage):
-            for block in message.content:
-                if isinstance(block, TextBlock):
-                    print("\nAgent 回复：")
-                    print(block.text)
+    try:
+        async for message in query(
+            prompt="请计算 15.5 乘以 3.2 的结果是多少？",
+            options=options
+        ):
+            # 打印助手的回复
+            if isinstance(message, AssistantMessage):
+                for block in message.content:
+                    if isinstance(block, TextBlock):
+                        print("\nAgent 回复：")
+                        print(block.text)
+
+            # 处理结果消息（确保消息流完整处理）
+            elif isinstance(message, ResultMessage):
+                if message.is_error:
+                    print(f"\n[错误] {message.result}")
+                else:
+                    print(f"\n[完成] 耗时: {message.duration_ms}ms")
+                    if message.total_cost_usd:
+                        print(f"[成本] ${message.total_cost_usd:.6f}")
+    except* Exception as eg:
+        # 捕获所有 ExceptionGroup（包括 CLIConnectionError 等）
+        # 检查是否只包含预期的传输层竞态条件错误
+        transport_errors = [exc for exc in eg.exceptions if _is_transport_race_condition(exc)]
+
+        if len(transport_errors) == len(eg.exceptions):
+            print(transport_errors)
+            pass
+        else:
+            # 有其他类型的错误，需要重新抛出
+            # 但先尝试提取非传输错误
+            other_errors = [exc for exc in eg.exceptions if not _is_transport_race_condition(exc)]
+            if other_errors:
+                # 如果有其他错误，重新抛出它们
+                if len(other_errors) == 1:
+                    raise other_errors[0]
+                else:
+                    # 创建新的 ExceptionGroup 只包含非传输错误
+                    raise ExceptionGroup("查询错误", other_errors) from eg
+            else:
+                raise
 
 
 if __name__ == "__main__":

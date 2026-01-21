@@ -6,15 +6,14 @@ from claude_agent_sdk import AssistantMessage, ClaudeAgentOptions, TextBlock, qu
 from dotenv import load_dotenv
 
 # 加载环境变量
-load_dotenv()
-
+load_dotenv(override=True)
 
 async def main() -> None:
     """运行基础示例"""
     # 配置选项
     options = ClaudeAgentOptions(
         # model="deepseek-chat",
-        model="claude-sonnet-4-5-20250929",
+        # model="claude-sonnet-4-5-20250929",
         system_prompt="你是一个有帮助的助手，专注于准确性。",
     )
 
