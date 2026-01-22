@@ -50,3 +50,8 @@ dmypy.json
 
 # 日志
 *.log
+
+# Node.js
+node_modules/
+
+.DS_Store
