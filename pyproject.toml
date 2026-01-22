@@ -10,7 +10,17 @@ authors = [
 dependencies = [
     "claude-agent-sdk>=0.1.17",
     "python-dotenv>=1.0.0",
-    "httpx[socks]>=0.27.2"
+    "httpx[socks]>=0.27.2",
+]
+
+[project.optional-dependencies]
+sandbox = [
+    "e2b>=1.0.0",
+]
+api = [
+    "fastapi>=0.100.0",
+    "uvicorn>=0.23.0",
+    "e2b>=1.0.0",
 ]
 
 [project.optional-dependencies]

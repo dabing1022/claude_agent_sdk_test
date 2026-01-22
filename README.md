@@ -32,12 +32,16 @@ claude-agent-sdk-test/
 │   ├── 01_basic_usage.py             # 基础使用示例
 │   ├── 01_basic_usage_verbose.py     # 带进度提示的基础示例
 │   ├── 02_custom_tools.py            # 自定义 MCP 工具示例
-│   └── 03_async_streaming.py         # 双向交互示例
+│   ├── 03_async_streaming.py         # 双向交互示例
+│   ├── 04_sandbox_execution.py       # 沙箱执行示例
+│   └── 05_sandbox_api_server.py      # 沙箱 API 服务器示例
 ├── tools/                  # 工具目录
 │   └── performance_diagnostics.py    # 性能诊断工具
 ├── docs/                   # 文档目录
 │   ├── SDK_SOURCE_CODE_ANALYSIS.md   # SDK 源码分析
-│   └── PERFORMANCE_OPTIMIZATION.md   # 性能优化指南
+│   ├── PERFORMANCE_OPTIMIZATION.md   # 性能优化指南
+│   ├── SANDBOX_COMPARISON.md         # 沙箱方案对比
+│   └── SANDBOX_USAGE.md              # 沙箱使用指南
 └── tests/                  # 测试目录
 ```
 
@@ -62,6 +66,16 @@ pip install -e .
 
 ```bash
 pip install -e ".[dev]"
+```
+
+### 4. 安装沙箱功能依赖（可选）
+
+```bash
+# 仅沙箱功能
+pip install -e ".[sandbox]"
+
+# 包含 API 服务器
+pip install -e ".[api]"
 ```
 
 ### 4. 配置环境变量
@@ -103,6 +117,22 @@ python examples/03_async_streaming.py
 ```
 
 展示如何使用异步 API 获取流式响应。
+
+### 示例 4：沙箱执行
+
+```bash
+python examples/04_sandbox_execution.py
+```
+
+演示如何在安全沙箱中执行工具，需要配置 `E2B_API_KEY`。
+
+### 示例 5：沙箱 API 服务器
+
+```bash
+python examples/05_sandbox_api_server.py
+```
+
+启动一个安全的 API 服务器，将工具执行隔离到沙箱中。
 
 ## 代码示例
 
@@ -233,6 +263,54 @@ python tools/performance_diagnostics.py
 
 - [SDK 源码分析](docs/SDK_SOURCE_CODE_ANALYSIS.md) - 详细的架构和源码分析
 - [性能优化指南](docs/PERFORMANCE_OPTIMIZATION.md) - 性能优化和使用建议
+- [沙箱方案对比](docs/SANDBOX_COMPARISON.md) - 不同沙箱方案的对比分析
+- [沙箱使用指南](docs/SANDBOX_USAGE.md) - 沙箱执行服务的使用文档
+
+## 沙箱执行服务
+
+本项目提供了一套完整的沙箱执行服务，用于将 Claude Agent SDK 的工具执行隔离到安全环境中。
+
+### 为什么需要沙箱？
+
+Claude Agent SDK 内置了许多强大的工具（Bash、Read、Write、Edit 等），在 API 服务器上直接执行存在安全风险：
+- **命令执行风险**: Bash 工具可以执行任意系统命令
+- **文件系统风险**: 文件操作可能访问敏感数据
+- **资源耗尽风险**: 恶意代码可能耗尽系统资源
+
+### 沙箱解决方案
+
+本项目支持多种沙箱后端，推荐使用 E2B：
+
+```python
+from claude_agent_test.sandbox import SandboxConfig, SandboxExecutor
+
+config = SandboxConfig(
+    e2b_api_key="your-api-key",
+)
+
+async with SandboxExecutor(config) as executor:
+    # 所有工具执行都在安全沙箱中进行
+    result = await executor.execute_bash("echo 'Hello from sandbox!'")
+    print(result.output)
+```
+
+### 与 Claude Agent SDK 集成
+
+```python
+from claude_agent_sdk import ClaudeAgentOptions, query
+from claude_agent_test.sandbox import SandboxConfig, SandboxExecutor
+
+async with SandboxExecutor(SandboxConfig()) as executor:
+    options = ClaudeAgentOptions(
+        can_use_tool=executor.get_tool_callback(),  # 使用沙箱工具回调
+    )
+    
+    async for message in query(prompt="执行 ls 命令", options=options):
+        # 工具执行在沙箱中完成
+        pass
+```
+
+详细文档请参阅 [沙箱使用指南](docs/SANDBOX_USAGE.md)。
 
 ## 开发工具
 
