@@ -153,7 +153,7 @@ async def demo_direct_sandbox_usage():
         
         # 执行多个命令
         commands = [
-            "python --version",
+            "python3 --version",
             "pip --version",
             "node --version 2>/dev/null || echo 'Node not installed'",
             "echo $PATH",
@@ -167,16 +167,29 @@ async def demo_direct_sandbox_usage():
 
 async def demo_with_claude_agent_sdk():
     """
-    演示与 Claude Agent SDK 集成
+    演示与 Claude Agent SDK 集成 - 使用 MCP Server 实现沙箱工具
     
-    注意：此示例需要安装 claude-agent-sdk 并配置 ANTHROPIC_API_KEY
+    关键点：
+    - Claude Agent SDK 内置的工具（Bash, Write 等）总是在本地执行
+    - 要实现沙箱执行，需要使用自定义 MCP 工具，禁用内置工具
+    - 在自定义工具中调用 E2B 沙箱
     """
     print("\n" + "=" * 60)
-    print("演示 4: 与 Claude Agent SDK 集成")
+    print("演示 4: 与 Claude Agent SDK 集成（MCP 沙箱工具）")
     print("=" * 60)
     
     try:
-        from claude_agent_sdk import ClaudeAgentOptions, query, AssistantMessage, TextBlock
+        from claude_agent_sdk import (
+            AssistantMessage,
+            ClaudeAgentOptions,
+            PermissionMode,
+            TextBlock,
+            ToolResultBlock,
+            ToolUseBlock,
+            create_sdk_mcp_server,
+            query,
+            tool,
+        )
     except ImportError:
         print("  跳过：未安装 claude-agent-sdk")
         return
@@ -190,36 +203,162 @@ async def demo_with_claude_agent_sdk():
     sandbox_config = SandboxConfig(
         sandbox_type=SandboxType.E2B,
         e2b_api_key=os.environ.get("E2B_API_KEY"),
-        security=SecurityConfig(
-            enable_audit_log=True,
-        ),
     )
     
-    # 创建沙箱执行器
+    # 使用沙箱执行器
     async with SandboxExecutor(sandbox_config) as executor:
-        # 获取工具回调
-        tool_callback = executor.get_tool_callback()
+        print(f"\n沙箱已启动: {executor.stats}")
         
-        # 创建 Claude Agent SDK 选项
-        options = ClaudeAgentOptions(
-            system_prompt="你是一个代码助手。所有代码执行都在安全沙箱中进行。",
-            can_use_tool=tool_callback,  # 使用沙箱工具回调
+        # 定义在沙箱中执行的工具
+        @tool(
+            name="sandbox_bash",
+            description="在安全沙箱中执行 Bash 命令。所有命令都在隔离的 E2B 云环境中运行。",
+            input_schema={
+                "type": "object",
+                "properties": {
+                    "command": {
+                        "type": "string",
+                        "description": "要执行的 Bash 命令"
+                    }
+                },
+                "required": ["command"]
+            }
+        )
+        async def sandbox_bash(args: dict) -> dict:
+            """在沙箱中执行 Bash 命令"""
+            command = args.get("command", "")
+            print(f"\n[沙箱执行] Bash: {command}", flush=True)
+            
+            result = await executor.execute_bash(command)
+            
+            output = result.output if result.success else f"错误: {result.error}"
+            print(f"[沙箱结果] {output[:200]}...", flush=True)
+            
+            return {
+                "content": [{"type": "text", "text": output}],
+                "isError": not result.success
+            }
+        
+        @tool(
+            name="sandbox_write_file",
+            description="在安全沙箱中写入文件。文件保存在隔离的 E2B 云环境中。",
+            input_schema={
+                "type": "object",
+                "properties": {
+                    "path": {
+                        "type": "string",
+                        "description": "文件路径"
+                    },
+                    "content": {
+                        "type": "string",
+                        "description": "文件内容"
+                    }
+                },
+                "required": ["path", "content"]
+            }
+        )
+        async def sandbox_write_file(args: dict) -> dict:
+            """在沙箱中写入文件"""
+            path = args.get("path", "")
+            content = args.get("content", "")
+            print(f"\n[沙箱执行] 写入文件: {path}", flush=True)
+            
+            result = await executor.write_file(path, content)
+            
+            output = result.output if result.success else f"错误: {result.error}"
+            print(f"[沙箱结果] {output}", flush=True)
+            
+            return {
+                "content": [{"type": "text", "text": output}],
+                "isError": not result.success
+            }
+        
+        @tool(
+            name="sandbox_read_file",
+            description="从安全沙箱中读取文件。",
+            input_schema={
+                "type": "object",
+                "properties": {
+                    "path": {
+                        "type": "string",
+                        "description": "文件路径"
+                    }
+                },
+                "required": ["path"]
+            }
+        )
+        async def sandbox_read_file(args: dict) -> dict:
+            """从沙箱中读取文件"""
+            path = args.get("path", "")
+            print(f"\n[沙箱执行] 读取文件: {path}", flush=True)
+            
+            result = await executor.read_file(path)
+            
+            output = result.output if result.success else f"错误: {result.error}"
+            print(f"[沙箱结果] {output[:200]}...", flush=True)
+            
+            return {
+                "content": [{"type": "text", "text": output}],
+                "isError": not result.success
+            }
+        
+        # 创建 SDK MCP 服务器（进程内）
+        sandbox_mcp_server = create_sdk_mcp_server(
+            name="sandbox_tools",
+            version="1.0.0",
+            tools=[sandbox_bash, sandbox_write_file, sandbox_read_file]
         )
         
-        print("\n正在与 Claude 交互...")
+        # 创建 Claude Agent SDK 选项
+        # 关键：禁用内置的 Bash/Write/Read 工具，只使用我们的沙箱工具
+        options = ClaudeAgentOptions(
+            system_prompt="""你是一个代码助手。所有代码执行都在安全的 E2B 云沙箱中进行。
+
+可用的沙箱工具：
+- sandbox_bash: 在沙箱中执行 Bash 命令
+- sandbox_write_file: 在沙箱中写入文件  
+- sandbox_read_file: 从沙箱中读取文件
+
+重要：你只能使用上述沙箱工具，不要使用其他工具。""",
+            # 禁用可能在本地执行的危险工具
+            disallowed_tools=["Bash", "Write", "Edit", "Read", "Glob", "Grep", "NotebookEdit"],
+            permission_mode="bypassPermissions",
+            mcp_servers={"sandbox": sandbox_mcp_server},
+        )
+        
+        print("\n正在与 Claude 交互（使用沙箱工具）...")
+        
+        async def stream_prompt():
+            yield {"type": "user", "message": {"role": "user", "content": "请在沙箱中执行 'echo Hello from E2B Sandbox!' 命令，然后创建一个文件 test.txt 内容为 'Hello World'，最后读取这个文件。"}}
         
         # 发送查询
         async for message in query(
-            prompt="请执行一个简单的 Python 命令来打印 'Hello from Sandbox!'",
+            prompt=stream_prompt(),
             options=options,
         ):
+            print(f"\n[DEBUG] Message type: {type(message).__name__}")
+            
             if isinstance(message, AssistantMessage):
                 for block in message.content:
                     if isinstance(block, TextBlock):
-                        print(f"\nClaude: {block.text}")
+                        print(f"\n[Text] Claude: {block.text}")
+                    elif isinstance(block, ToolUseBlock):
+                        print(f"\n[ToolUse] 工具调用: {block.name}")
+                        print(f"  ID: {block.id}")
+                        print(f"  输入: {block.input}")
+                    elif isinstance(block, ToolResultBlock):
+                        print("\n[ToolResult] 工具结果:")
+                        print(f"  工具ID: {block.tool_use_id}")
+                        print(f"  内容: {block.content}")
+                        print(f"  是否错误: {block.is_error}")
+                    else:
+                        print(f"\n[Other Block] {type(block).__name__}: {block}")
+            else:
+                print(f"[DEBUG] Message: {message}")
         
         # 显示审计日志
-        print("\n审计日志:")
+        print("\n" + "=" * 60)
+        print("沙箱审计日志:")
         for log in executor.get_audit_logs():
             print(f"  [{log['tool_name']}] 成功={log['success']}, 耗时={log['execution_time_ms']}ms")
 
@@ -244,7 +383,7 @@ async def main():
         # await demo_basic_sandbox()
         # await demo_security_validation()
         # await demo_direct_sandbox_usage()
-        # await demo_with_claude_agent_sdk()
+        await demo_with_claude_agent_sdk()
         
     except Exception as e:
         print(f"\n错误: {e}")

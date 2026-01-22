@@ -267,7 +267,7 @@ class ToolProxy:
 # 权限回调创建函数
 def create_sandbox_tool_callback(
     tool_proxy: ToolProxy,
-) -> Callable[[str, dict, Any], Coroutine[Any, Any, dict]]:
+) -> Callable[[str, dict, Any], Coroutine[Any, Any, Any]]:
     """
     创建用于 Claude Agent SDK 的工具权限回调
     
@@ -300,7 +300,7 @@ def create_sandbox_tool_callback(
         tool_name: str,
         input_args: dict,
         context: Any,  # ToolPermissionContext
-    ) -> dict:
+    ) -> Any:
         """
         工具权限回调
         
@@ -311,9 +311,22 @@ def create_sandbox_tool_callback(
         对于不需要沙箱的工具：
         1. 直接允许执行
         """
+        # 尝试导入 SDK 类型
+        try:
+            from claude_agent_sdk import PermissionResultAllow, PermissionResultDeny
+        except ImportError:
+            # 如果导入失败，使用字典格式（兼容旧版本）
+            PermissionResultAllow = None
+            PermissionResultDeny = None
+        
+        logger.info(f"can_use_tool 被调用: tool_name={tool_name}, input_args={input_args}")
+        
         # 检查是否需要沙箱执行
         if not tool_proxy.should_sandbox(tool_name):
             # 允许直接执行
+            logger.info(f"工具 {tool_name} 不需要沙箱，直接允许")
+            if PermissionResultAllow:
+                return PermissionResultAllow(behavior="allow")
             return {"behavior": "allow"}
         
         # 在沙箱中执行
@@ -322,25 +335,33 @@ def create_sandbox_tool_callback(
             arguments=input_args,
         )
         
+        logger.info(f"在沙箱中执行工具: {tool_name}")
         result = await tool_proxy.execute(tool_input)
+        logger.info(f"沙箱执行结果: success={result.success}, output={result.output}, error={result.error}")
         
         if result.success:
             # 返回允许，并提供执行结果
-            # 注意：这里我们通过 updatedInput 传递沙箱执行结果
+            # 注意：这里我们通过 updated_input 传递沙箱执行结果
             # SDK 会使用这个结果而不是实际执行工具
+            updated_input = {
+                **input_args,
+                "_sandbox_result": result.output,
+                "_sandbox_executed": True,
+            }
+            if PermissionResultAllow:
+                return PermissionResultAllow(behavior="allow", updated_input=updated_input)
             return {
                 "behavior": "allow",
-                "updatedInput": {
-                    **input_args,
-                    "_sandbox_result": result.output,
-                    "_sandbox_executed": True,
-                }
+                "updated_input": updated_input,
             }
         else:
             # 执行失败，拒绝工具调用
+            error_msg = f"沙箱执行失败: {result.error}"
+            if PermissionResultDeny:
+                return PermissionResultDeny(behavior="deny", message=error_msg, interrupt=False)
             return {
                 "behavior": "deny",
-                "message": f"沙箱执行失败: {result.error}",
+                "message": error_msg,
             }
     
     return can_use_tool

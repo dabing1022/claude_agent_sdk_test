@@ -148,7 +148,7 @@ class SandboxExecutor:
     ):
         """
         初始化沙箱执行器
-        
+
         Args:
             config: 沙箱配置
             use_pool: 是否使用沙箱池（多沙箱复用）
