@@ -104,23 +104,30 @@ async def main() -> None:
 
     # 配置选项
     options = ClaudeAgentOptions(
-        # model="claude-sonnet-4-5-20250929",
-        # model="deepseek-chat",
+        # model 参数留空,使用环境变量 ANTHROPIC_MODEL
         system_prompt="你是一个数学助手。使用提供的计算器工具来进行计算。",
-        # mcp_servers={"calculator": calculator_server},
+        mcp_servers={"calculator": calculator_server},
         # 允许使用这些工具
-        # allowed_tools=["add", "multiply", "subtract", "divide"],
+        allowed_tools=[
+            "mcp__calculator__add",
+            "mcp__calculator__multiply",
+            "mcp__calculator__subtract",
+            "mcp__calculator__divide"
+        ]
     )
 
     print("正在询问 Claude 进行计算...")
 
+    async def wrap_prompt(text):
+        yield {"type": "user", "message": {"role": "user", "content": text}}  # noqa: E501
     # 使用 query() 函数查询
     try:
         async for message in query(
-            prompt="请计算 15.5 乘以 3.2 的结果是多少？",
+            prompt=wrap_prompt("请计算 15.5 乘以 3.2 的结果是多少？"),
             options=options
         ):
             # 打印助手的回复
+            print(message)
             if isinstance(message, AssistantMessage):
                 for block in message.content:
                     if isinstance(block, TextBlock):

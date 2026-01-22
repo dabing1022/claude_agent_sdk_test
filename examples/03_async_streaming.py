@@ -19,8 +19,6 @@ async def main() -> None:
     """运行异步流式示例"""
     # 配置选项
     options = ClaudeAgentOptions(
-        # model="claude-sonnet-4-5-20250929",
-        model="deepseek-chat",
         system_prompt="你是一个有帮助的助手。请用简洁的方式回答问题。",
     )
 
