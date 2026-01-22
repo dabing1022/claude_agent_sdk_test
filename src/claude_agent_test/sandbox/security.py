@@ -326,7 +326,7 @@ class SecurityManager:
     def __init__(
         self,
         config: SecurityConfig,
-        working_directory: str = "/workspace",
+        working_directory: str = "/home/user/workspace",
         rate_limit_requests: int = 100,
         rate_limit_window: int = 60,
     ):

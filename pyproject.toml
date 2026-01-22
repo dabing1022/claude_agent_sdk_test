@@ -22,8 +22,6 @@ api = [
     "uvicorn>=0.23.0",
     "e2b>=1.0.0",
 ]
-
-[project.optional-dependencies]
 dev = [
     "pytest>=7.0.0",
     "black>=23.0.0",
@@ -42,7 +40,7 @@ target-version = ["py312"]
 [tool.ruff]
 line-length = 100
 target-version = "py312"
-select = ["E", "F", "I", "N", "W", "UP"]
+select = ["E", "F", "I", "N", "W", "UP", "W293"]
 
 [tool.mypy]
 python_version = "3.12"

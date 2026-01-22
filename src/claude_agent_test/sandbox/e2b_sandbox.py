@@ -75,11 +75,12 @@ class E2BSandbox(BaseSandbox):
     async def disconnect(self) -> None:
         """断开 E2B 沙箱连接"""
         if not self._is_connected or self._sandbox is None:
+            logger.warning("E2B 沙箱未连接或已关闭")
             return
         
         try:
             logger.info(f"正在关闭 E2B 沙箱: {self._sandbox_id}")
-            await self._sandbox.close()
+            await self._sandbox.kill()
             logger.info("E2B 沙箱已关闭")
         except Exception as e:
             logger.warning(f"关闭 E2B 沙箱时出错: {e}")

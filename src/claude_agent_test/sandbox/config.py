@@ -101,8 +101,8 @@ class SandboxConfig:
     auto_cleanup: bool = True  # 执行完成后自动清理
     persist_files: bool = False  # 是否持久化文件
     
-    # 工作目录
-    working_directory: str = "/workspace"
+    # 工作目录（E2B 沙箱默认用户为 user，需使用用户有权限的目录）
+    working_directory: str = "/home/user/workspace"
     
     # 调试模式
     debug: bool = False

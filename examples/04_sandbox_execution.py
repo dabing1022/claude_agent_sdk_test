@@ -11,21 +11,28 @@
 """
 
 import asyncio
+import logging
 import os
 
 from dotenv import load_dotenv
+
+# 配置 logging 以便查看沙箱操作日志
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+)
 
 # 加载环境变量
 load_dotenv(override=True)
 
 # 导入沙箱模块
-from claude_agent_test.sandbox import (
-    SandboxConfig,
-    SandboxType,
-    SandboxExecutor,
+from claude_agent_test.sandbox import (  # noqa: E402
     E2BSandbox,
+    SandboxConfig,
+    SandboxExecutor,
+    SandboxType,
 )
-from claude_agent_test.sandbox.config import ResourceLimits, SecurityConfig
+from claude_agent_test.sandbox.config import ResourceLimits, SecurityConfig  # noqa: E402
 
 
 async def demo_basic_sandbox():
@@ -234,10 +241,10 @@ async def main():
     
     try:
         # 运行演示
-        await demo_basic_sandbox()
-        await demo_security_validation()
-        await demo_direct_sandbox_usage()
-        await demo_with_claude_agent_sdk()
+        # await demo_basic_sandbox()
+        # await demo_security_validation()
+        # await demo_direct_sandbox_usage()
+        # await demo_with_claude_agent_sdk()
         
     except Exception as e:
         print(f"\n错误: {e}")

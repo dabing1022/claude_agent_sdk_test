@@ -189,7 +189,7 @@ def get_sandbox_config() -> SandboxConfig:
             enable_audit_log=True,
             allow_root=False,
         ),
-        working_directory="/workspace",
+        working_directory="/home/user/workspace",
         debug=os.environ.get("DEBUG", "").lower() == "true",
     )
 
