@@ -25,6 +25,7 @@ from .types import (
 from .executor import SandboxExecutor, SandboxPool
 from .tool_proxy import ToolProxy, create_sandbox_tool_callback
 from .e2b_sandbox import E2BSandbox, create_e2b_sandbox
+from .daytona_sandbox import DaytonaSandbox, create_daytona_sandbox
 from .security import (
     SecurityManager,
     CommandAnalyzer,
@@ -59,6 +60,9 @@ __all__ = [
     # E2B 沙箱
     "E2BSandbox",
     "create_e2b_sandbox",
+    # Daytona 沙箱
+    "DaytonaSandbox",
+    "create_daytona_sandbox",
     # 安全
     "SecurityManager",
     "CommandAnalyzer",

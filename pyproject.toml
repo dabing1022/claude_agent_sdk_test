@@ -16,6 +16,8 @@ dependencies = [
 [project.optional-dependencies]
 sandbox = [
     "e2b>=1.0.0",
+    "daytona>=0.113.2",
+    "daytona-sdk>=0.10.0",
 ]
 api = [
     "fastapi>=0.100.0",

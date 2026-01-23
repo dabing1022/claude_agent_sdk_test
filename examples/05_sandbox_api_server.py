@@ -19,7 +19,7 @@ import asyncio
 import os
 import uuid
 from contextlib import asynccontextmanager
-from typing import Any, Dict, List, Optional
+from typing import Any, Optional
 
 from dotenv import load_dotenv
 
@@ -27,20 +27,19 @@ from dotenv import load_dotenv
 load_dotenv(override=True)
 
 try:
-    from fastapi import FastAPI, HTTPException, BackgroundTasks
+    from fastapi import FastAPI, HTTPException
     from pydantic import BaseModel
+
+    from claude_agent_test.sandbox import (
+        SandboxConfig,
+        SandboxExecutor,
+        SandboxType,
+    )
+    from claude_agent_test.sandbox.config import NetworkConfig, ResourceLimits, SecurityConfig
+    from claude_agent_test.sandbox.types import ToolInput
 except ImportError:
     print("请安装 FastAPI: pip install fastapi uvicorn")
     exit(1)
-
-from claude_agent_test.sandbox import (
-    SandboxConfig,
-    SandboxType,
-    SandboxExecutor,
-)
-from claude_agent_test.sandbox.config import ResourceLimits, SecurityConfig, NetworkConfig
-from claude_agent_test.sandbox.types import ToolInput
-
 
 # ============================================
 # 请求/响应模型
@@ -49,7 +48,7 @@ from claude_agent_test.sandbox.types import ToolInput
 class ExecuteRequest(BaseModel):
     """执行请求"""
     tool_name: str
-    arguments: Dict[str, Any]
+    arguments: dict[str, Any]
     session_id: Optional[str] = None
 
 
@@ -101,8 +100,8 @@ class SessionManager:
     """会话管理器"""
     
     def __init__(self):
-        self._sessions: Dict[str, SandboxExecutor] = {}
-        self._session_info: Dict[str, Dict[str, Any]] = {}
+        self._sessions: dict[str, SandboxExecutor] = {}
+        self._session_info: dict[str, dict[str, Any]] = {}
     
     async def create_session(self, config: SandboxConfig) -> str:
         """创建新会话"""
@@ -139,7 +138,7 @@ class SessionManager:
         for session_id in list(self._sessions.keys()):
             await self.close_session(session_id)
     
-    def list_sessions(self) -> List[SessionInfo]:
+    def list_sessions(self) -> list[SessionInfo]:
         """列出所有会话"""
         result = []
         for session_id, info in self._session_info.items():
