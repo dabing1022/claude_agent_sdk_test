@@ -1,0 +1,838 @@
+{
+  "version": "2.6",
+  "children": [
+    {
+      "type": "frame",
+      "id": "hOAXi",
+      "x": 53,
+      "y": 114,
+      "name": "Architecture Diagram",
+      "width": 1600,
+      "fill": "#0A0E27",
+      "layout": "vertical",
+      "gap": 48,
+      "padding": 80,
+      "children": [
+        {
+          "type": "text",
+          "id": "ld7kc",
+          "name": "title",
+          "fill": "#60A5FA",
+          "content": "Claude Agent SDK 测试项目架构",
+          "fontFamily": "Inter",
+          "fontSize": 56,
+          "fontWeight": "bold"
+        },
+        {
+          "type": "text",
+          "id": "XndKa",
+          "name": "subtitle",
+          "fill": "#E2E8F0",
+          "content": "基于 Python 的 AI Agent 开发与沙箱执行框架",
+          "fontFamily": "Inter",
+          "fontSize": 22,
+          "fontWeight": "normal"
+        },
+        {
+          "type": "frame",
+          "id": "JrBu2",
+          "name": "layersContainer",
+          "width": "fill_container",
+          "layout": "vertical",
+          "gap": 32,
+          "children": [
+            {
+              "type": "frame",
+              "id": "AxzQa",
+              "name": "应用层",
+              "width": "fill_container",
+              "fill": "#1E40AF",
+              "cornerRadius": 16,
+              "layout": "vertical",
+              "gap": 24,
+              "padding": 32,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "w816F",
+                  "name": "layer1Title",
+                  "fill": "#93C5FD",
+                  "content": "应用层 (Application Layer)",
+                  "fontFamily": "Inter",
+                  "fontSize": 32,
+                  "fontWeight": "bold"
+                },
+                {
+                  "type": "frame",
+                  "id": "umaT4",
+                  "name": "layer1Content",
+                  "width": "fill_container",
+                  "gap": 16,
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "VZlJF",
+                      "name": "examplesCard",
+                      "width": "fill_container",
+                      "fill": "#2563EB",
+                      "cornerRadius": 12,
+                      "layout": "vertical",
+                      "gap": 12,
+                      "padding": 24,
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "nssCG",
+                          "name": "examplesTitle",
+                          "fill": "#DBEAFE",
+                          "content": "Examples 示例",
+                          "fontFamily": "Inter",
+                          "fontSize": 18,
+                          "fontWeight": "semibold"
+                        },
+                        {
+                          "type": "text",
+                          "id": "sYPej",
+                          "name": "examplesDesc",
+                          "fill": "#BFDBFE",
+                          "content": "• 基础使用\n• 自定义工具\n• 异步流式响应\n• 沙箱执行\n• API 服务器",
+                          "lineHeight": 1.6,
+                          "fontFamily": "Inter",
+                          "fontSize": 14,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "FhOEQ",
+                      "name": "toolsCard",
+                      "width": "fill_container",
+                      "fill": "#2563EB",
+                      "cornerRadius": 12,
+                      "layout": "vertical",
+                      "gap": 12,
+                      "padding": 24,
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "cnyPu",
+                          "name": "toolsTitle",
+                          "fill": "#DBEAFE",
+                          "content": "Tools 工具",
+                          "fontFamily": "Inter",
+                          "fontSize": 18,
+                          "fontWeight": "semibold"
+                        },
+                        {
+                          "type": "text",
+                          "id": "DQ2de",
+                          "name": "toolsDesc",
+                          "fill": "#BFDBFE",
+                          "content": "• 性能诊断\n• 快速测试\n• 代码检查",
+                          "lineHeight": 1.6,
+                          "fontFamily": "Inter",
+                          "fontSize": 14,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "G3NPf",
+              "name": "核心层",
+              "width": "fill_container",
+              "fill": "#065F46",
+              "cornerRadius": 16,
+              "layout": "vertical",
+              "gap": 24,
+              "padding": 32,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "GDziq",
+                  "name": "layer2Title",
+                  "fill": "#6EE7B7",
+                  "content": "核心层 (Core Layer)",
+                  "fontFamily": "Inter",
+                  "fontSize": 32,
+                  "fontWeight": "bold"
+                },
+                {
+                  "type": "frame",
+                  "id": "rBawz",
+                  "name": "layer2Content",
+                  "width": "fill_container",
+                  "gap": 16,
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "hEOSM",
+                      "name": "sdkCard",
+                      "width": "fill_container",
+                      "fill": "#047857",
+                      "cornerRadius": 12,
+                      "layout": "vertical",
+                      "gap": 12,
+                      "padding": 24,
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "cLx02",
+                          "name": "sdkTitle",
+                          "fill": "#D1FAE5",
+                          "content": "Claude Agent SDK",
+                          "fontFamily": "Inter",
+                          "fontSize": 18,
+                          "fontWeight": "semibold"
+                        },
+                        {
+                          "type": "text",
+                          "id": "POcJU",
+                          "name": "sdkDesc",
+                          "fill": "#A7F3D0",
+                          "content": "• Agent 循环逻辑\n• 工具编排\n• 上下文管理\n• 扩展思考模式",
+                          "lineHeight": 1.6,
+                          "fontFamily": "Inter",
+                          "fontSize": 14,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "2kdwx",
+                      "name": "sandboxCard",
+                      "width": "fill_container",
+                      "fill": "#047857",
+                      "cornerRadius": 12,
+                      "layout": "vertical",
+                      "gap": 12,
+                      "padding": 24,
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "RLlIa",
+                          "name": "sandboxTitle",
+                          "fill": "#D1FAE5",
+                          "content": "Sandbox 沙箱模块",
+                          "fontFamily": "Inter",
+                          "fontSize": 18,
+                          "fontWeight": "semibold"
+                        },
+                        {
+                          "type": "text",
+                          "id": "l81WU",
+                          "name": "sandboxDesc",
+                          "fill": "#A7F3D0",
+                          "content": "• E2B 沙箱\n• 工具代理\n• 安全执行\n• 配置管理",
+                          "lineHeight": 1.6,
+                          "fontFamily": "Inter",
+                          "fontSize": 14,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "I0hpB",
+              "name": "基础设施层",
+              "width": "fill_container",
+              "fill": "#92400E",
+              "cornerRadius": 16,
+              "layout": "vertical",
+              "gap": 24,
+              "padding": 32,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "VnOUj",
+                  "name": "layer3Title",
+                  "fill": "#FCD34D",
+                  "content": "基础设施层 (Infrastructure Layer)",
+                  "fontFamily": "Inter",
+                  "fontSize": 32,
+                  "fontWeight": "bold"
+                },
+                {
+                  "type": "frame",
+                  "id": "oDSPC",
+                  "name": "layer3Content",
+                  "width": "fill_container",
+                  "gap": 16,
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "O3aBV",
+                      "name": "pythonCard",
+                      "width": "fill_container",
+                      "fill": "#B45309",
+                      "cornerRadius": 12,
+                      "layout": "vertical",
+                      "gap": 12,
+                      "padding": 24,
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "H7kSp",
+                          "name": "pythonTitle",
+                          "fill": "#FEF3C7",
+                          "content": "Python 运行时",
+                          "fontFamily": "Inter",
+                          "fontSize": 18,
+                          "fontWeight": "semibold"
+                        },
+                        {
+                          "type": "text",
+                          "id": "LaeDp",
+                          "name": "pythonDesc",
+                          "fill": "#FDE68A",
+                          "content": "• Python 3.12+\n• 异步 I/O\n• 类型系统\n• 包管理",
+                          "lineHeight": 1.6,
+                          "fontFamily": "Inter",
+                          "fontSize": 14,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "mTGBr",
+                      "name": "devCard",
+                      "width": "fill_container",
+                      "fill": "#B45309",
+                      "cornerRadius": 12,
+                      "layout": "vertical",
+                      "gap": 12,
+                      "padding": 24,
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "hzPmG",
+                          "name": "devTitle",
+                          "fill": "#FEF3C7",
+                          "content": "开发工具",
+                          "fontFamily": "Inter",
+                          "fontSize": 18,
+                          "fontWeight": "semibold"
+                        },
+                        {
+                          "type": "text",
+                          "id": "HgGYE",
+                          "name": "devDesc",
+                          "fill": "#FDE68A",
+                          "content": "• Black 格式化\n• Ruff 代码检查\n• MyPy 类型检查\n• Pytest 测试",
+                          "lineHeight": 1.6,
+                          "fontFamily": "Inter",
+                          "fontSize": 14,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "PdS54",
+                      "name": "apiCard",
+                      "width": "fill_container",
+                      "fill": "#B45309",
+                      "cornerRadius": 12,
+                      "layout": "vertical",
+                      "gap": 12,
+                      "padding": 24,
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "gIhLs",
+                          "name": "apiTitle",
+                          "fill": "#FEF3C7",
+                          "content": "API 服务",
+                          "fontFamily": "Inter",
+                          "fontSize": 18,
+                          "fontWeight": "semibold"
+                        },
+                        {
+                          "type": "text",
+                          "id": "KmMvd",
+                          "name": "apiDesc",
+                          "fill": "#FDE68A",
+                          "content": "• FastAPI\n• Uvicorn\n• HTTP 客户端\n• 代理支持",
+                          "lineHeight": 1.6,
+                          "fontFamily": "Inter",
+                          "fontSize": 14,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "1ijFS",
+              "name": "外部依赖层",
+              "width": "fill_container",
+              "fill": "#9F1239",
+              "cornerRadius": 16,
+              "layout": "vertical",
+              "gap": 24,
+              "padding": 32,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "snIFp",
+                  "name": "layer4Title",
+                  "fill": "#FCA5A5",
+                  "content": "外部依赖层 (External Dependencies)",
+                  "fontFamily": "Inter",
+                  "fontSize": 32,
+                  "fontWeight": "bold"
+                },
+                {
+                  "type": "frame",
+                  "id": "waNWu",
+                  "name": "layer4Content",
+                  "width": "fill_container",
+                  "gap": 16,
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "9HQXj",
+                      "name": "claudeCard",
+                      "width": "fill_container",
+                      "fill": "#BE123C",
+                      "cornerRadius": 12,
+                      "layout": "vertical",
+                      "gap": 12,
+                      "padding": 24,
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "lhHtg",
+                          "name": "claudeTitle",
+                          "fill": "#FECDD3",
+                          "content": "Anthropic Claude",
+                          "fontFamily": "Inter",
+                          "fontSize": 18,
+                          "fontWeight": "semibold"
+                        },
+                        {
+                          "type": "text",
+                          "id": "BUHPD",
+                          "name": "claudeDesc",
+                          "fill": "#FCA5A5",
+                          "content": "• Claude API\n• Sonnet 4.5 模型\n• 流式响应\n• 工具调用",
+                          "lineHeight": 1.6,
+                          "fontFamily": "Inter",
+                          "fontSize": 14,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "JyHM2",
+                      "name": "e2bCard",
+                      "width": "fill_container",
+                      "fill": "#BE123C",
+                      "cornerRadius": 12,
+                      "layout": "vertical",
+                      "gap": 12,
+                      "padding": 24,
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "9CA28",
+                          "name": "e2bTitle",
+                          "fill": "#FECDD3",
+                          "content": "E2B 沙箱",
+                          "fontFamily": "Inter",
+                          "fontSize": 18,
+                          "fontWeight": "semibold"
+                        },
+                        {
+                          "type": "text",
+                          "id": "RXbaJ",
+                          "name": "e2bDesc",
+                          "fill": "#FCA5A5",
+                          "content": "• 云端沙箱\n• 安全隔离\n• 文件系统\n• 命令执行",
+                          "lineHeight": 1.6,
+                          "fontFamily": "Inter",
+                          "fontSize": 14,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "NdB4B",
+                      "name": "mcpCard",
+                      "width": "fill_container",
+                      "fill": "#BE123C",
+                      "cornerRadius": 12,
+                      "layout": "vertical",
+                      "gap": 12,
+                      "padding": 24,
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "nhYMp",
+                          "name": "mcpTitle",
+                          "fill": "#FECDD3",
+                          "content": "MCP 协议",
+                          "fontFamily": "Inter",
+                          "fontSize": 18,
+                          "fontWeight": "semibold"
+                        },
+                        {
+                          "type": "text",
+                          "id": "2KpXe",
+                          "name": "mcpDesc",
+                          "fill": "#FCA5A5",
+                          "content": "• 工具协议\n• 双向通信\n• 自定义工具\n• CLI 二进制",
+                          "lineHeight": 1.6,
+                          "fontFamily": "Inter",
+                          "fontSize": 14,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "uhNGm",
+          "name": "legendContainer",
+          "width": "fill_container",
+          "fill": "#1E293B",
+          "cornerRadius": 12,
+          "gap": 32,
+          "padding": 24,
+          "children": [
+            {
+              "type": "text",
+              "id": "ne1Iz",
+              "name": "legendTitle",
+              "fill": "#F8FAFC",
+              "content": "架构说明:",
+              "fontFamily": "Inter",
+              "fontSize": 18,
+              "fontWeight": "semibold"
+            },
+            {
+              "type": "frame",
+              "id": "n1Dq9",
+              "name": "legend1",
+              "gap": 8,
+              "children": [
+                {
+                  "type": "ellipse",
+                  "id": "YDLZ4",
+                  "name": "legend1Dot",
+                  "fill": "#3B82F6",
+                  "width": 12,
+                  "height": 12
+                },
+                {
+                  "type": "text",
+                  "id": "qhvpj",
+                  "name": "legend1Text",
+                  "fill": "#E0E7FF",
+                  "content": "应用层 - 用户交互",
+                  "fontFamily": "Inter",
+                  "fontSize": 14,
+                  "fontWeight": "normal"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "dZAuh",
+              "name": "legend2",
+              "gap": 8,
+              "children": [
+                {
+                  "type": "ellipse",
+                  "id": "MLuXy",
+                  "name": "legend2Dot",
+                  "fill": "#10B981",
+                  "width": 12,
+                  "height": 12
+                },
+                {
+                  "type": "text",
+                  "id": "Q8m4H",
+                  "name": "legend2Text",
+                  "fill": "#D1FAE5",
+                  "content": "核心层 - 业务逻辑",
+                  "fontFamily": "Inter",
+                  "fontSize": 14,
+                  "fontWeight": "normal"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "0LDPk",
+              "name": "legend3",
+              "gap": 8,
+              "children": [
+                {
+                  "type": "ellipse",
+                  "id": "uRCGw",
+                  "name": "legend3Dot",
+                  "fill": "#F59E0B",
+                  "width": 12,
+                  "height": 12
+                },
+                {
+                  "type": "text",
+                  "id": "tFAMo",
+                  "name": "legend3Text",
+                  "fill": "#FEF3C7",
+                  "content": "基础设施 - 运行环境",
+                  "fontFamily": "Inter",
+                  "fontSize": 14,
+                  "fontWeight": "normal"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "KHY0m",
+              "name": "legend4",
+              "gap": 8,
+              "children": [
+                {
+                  "type": "ellipse",
+                  "id": "HgIeB",
+                  "name": "legend4Dot",
+                  "fill": "#F43F5E",
+                  "width": 12,
+                  "height": 12
+                },
+                {
+                  "type": "text",
+                  "id": "DOcYe",
+                  "name": "legend4Text",
+                  "fill": "#FECDD3",
+                  "content": "外部依赖 - 第三方服务",
+                  "fontFamily": "Inter",
+                  "fontSize": 14,
+                  "fontWeight": "normal"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "G86Hh",
+          "name": "featuresContainer",
+          "width": "fill_container",
+          "gap": 24,
+          "children": [
+            {
+              "type": "frame",
+              "id": "4mHMM",
+              "name": "feature1",
+              "width": "fill_container",
+              "fill": "#1E40AF",
+              "cornerRadius": 12,
+              "layout": "vertical",
+              "gap": 12,
+              "padding": 24,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "GYYsE",
+                  "name": "feature1Title",
+                  "fill": "#DBEAFE",
+                  "content": "🚀 核心特性",
+                  "fontFamily": "Inter",
+                  "fontSize": 22,
+                  "fontWeight": "bold"
+                },
+                {
+                  "type": "text",
+                  "id": "1nBCL",
+                  "name": "feature1Desc",
+                  "fill": "#BFDBFE",
+                  "content": "• 自动化 Agent 循环\n• 工具编排与上下文管理\n• 扩展思考模式",
+                  "lineHeight": 1.6,
+                  "fontFamily": "Inter",
+                  "fontSize": 14,
+                  "fontWeight": "normal"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "cLBAW",
+              "name": "feature2",
+              "width": "fill_container",
+              "fill": "#065F46",
+              "cornerRadius": 12,
+              "layout": "vertical",
+              "gap": 12,
+              "padding": 24,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "dWG8l",
+                  "name": "feature2Title",
+                  "fill": "#D1FAE5",
+                  "content": "🔒 安全沙箱",
+                  "fontFamily": "Inter",
+                  "fontSize": 22,
+                  "fontWeight": "bold"
+                },
+                {
+                  "type": "text",
+                  "id": "jYY9E",
+                  "name": "feature2Desc",
+                  "fill": "#A7F3D0",
+                  "content": "• E2B 云端隔离执行\n• 安全的工具代理机制\n• 防止恶意代码执行",
+                  "lineHeight": 1.6,
+                  "fontFamily": "Inter",
+                  "fontSize": 14,
+                  "fontWeight": "normal"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "sGXjD",
+              "name": "feature3",
+              "width": "fill_container",
+              "fill": "#92400E",
+              "cornerRadius": 12,
+              "layout": "vertical",
+              "gap": 12,
+              "padding": 24,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "6x6sF",
+                  "name": "feature3Title",
+                  "fill": "#FEF3C7",
+                  "content": "⚡ 性能优化",
+                  "fontFamily": "Inter",
+                  "fontSize": 22,
+                  "fontWeight": "bold"
+                },
+                {
+                  "type": "text",
+                  "id": "nPIkO",
+                  "name": "feature3Desc",
+                  "fill": "#FDE68A",
+                  "content": "• 连接复用机制\n• 异步流式响应\n• 性能诊断工具",
+                  "lineHeight": 1.6,
+                  "fontFamily": "Inter",
+                  "fontSize": 14,
+                  "fontWeight": "normal"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "dVXwl",
+          "name": "dataFlowContainer",
+          "width": "fill_container",
+          "fill": "#1E293B",
+          "cornerRadius": 12,
+          "layout": "vertical",
+          "gap": 16,
+          "padding": 24,
+          "children": [
+            {
+              "type": "text",
+              "id": "KRWBY",
+              "name": "dataFlowTitle",
+              "fill": "#A78BFA",
+              "content": "📊 数据流向",
+              "fontFamily": "Inter",
+              "fontSize": 24,
+              "fontWeight": "bold"
+            },
+            {
+              "type": "text",
+              "id": "OwolG",
+              "name": "dataFlowDesc",
+              "fill": "#C4B5FD",
+              "content": "应用层 → 核心层 (SDK + 沙箱) → 基础设施层 (Python 运行时) → 外部依赖层 (Claude API + E2B)",
+              "lineHeight": 1.6,
+              "fontFamily": "Inter",
+              "fontSize": 14,
+              "fontWeight": "normal"
+            },
+            {
+              "type": "text",
+              "id": "7W7jp",
+              "name": "arrow1",
+              "fill": "#93C5FD",
+              "content": "⬇️ 用户请求通过示例代码调用 SDK",
+              "fontFamily": "Inter",
+              "fontSize": 14,
+              "fontWeight": "normal"
+            },
+            {
+              "type": "text",
+              "id": "jo9Qp",
+              "name": "arrow2",
+              "fill": "#6EE7B7",
+              "content": "⬇️ SDK 处理逻辑并通过沙箱安全执行工具",
+              "fontFamily": "Inter",
+              "fontSize": 14,
+              "fontWeight": "normal"
+            },
+            {
+              "type": "text",
+              "id": "O0dPS",
+              "name": "arrow3",
+              "fill": "#FCD34D",
+              "content": "⬇️ 基础设施提供运行时环境和 API 服务",
+              "fontFamily": "Inter",
+              "fontSize": 14,
+              "fontWeight": "normal"
+            },
+            {
+              "type": "text",
+              "id": "AMyAk",
+              "name": "arrow4",
+              "fill": "#FCA5A5",
+              "content": "⬇️ 调用外部 Claude API 和 E2B 沙箱服务",
+              "fontFamily": "Inter",
+              "fontSize": 14,
+              "fontWeight": "normal"
+            },
+            {
+              "type": "text",
+              "id": "rthdf",
+              "name": "arrow5",
+              "fill": "#C4B5FD",
+              "content": "⬆️ 响应结果逐层返回至应用层",
+              "fontFamily": "Inter",
+              "fontSize": 14,
+              "fontWeight": "normal"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
