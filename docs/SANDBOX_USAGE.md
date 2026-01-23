@@ -467,8 +467,211 @@ if violations:
 2. 检查文件路径是否在禁止列表中
 3. 查看审计日志了解详细原因
 
+## Daytona 官方示例
+
+Daytona 官方提供了三个与 Claude Agent SDK 集成的示例，展示了不同的使用场景。
+
+### 示例 1：交互式终端沙箱
+
+> 文档链接：https://www.daytona.io/docs/en/claude-agent-sdk-interactive-terminal-sandbox/
+
+**功能概述**
+
+在 Daytona 沙箱中运行自主编码代理，支持：
+- 开发全栈 Web 应用
+- 用任何编程语言编写代码
+- 安装依赖并运行脚本
+- 启动和管理开发服务器
+- 生成实时应用预览链接
+
+**环境变量配置**
+
+```bash
+DAYTONA_API_KEY=your-daytona-api-key      # 从 Daytona 仪表板获取
+SANDBOX_ANTHROPIC_API_KEY=your-api-key    # 从 Anthropic 控制台获取
+```
+
+**代理工具配置**
+
+允许的工具包括：`Read`、`Edit`、`Glob`、`Grep`、`Bash`，权限模式设为 `acceptEdits`。
+
+**核心代码示例**
+
+```typescript
+// 向代理发送提示
+const result = await sandbox.codeInterpreter.runCode(
+  `coding_agent.run_query_sync(os.environ.get('PROMPT', ''))`,
+  { context: ctx, envs: { PROMPT: prompt } }
+)
+```
+
+**使用步骤**
+
+1. 克隆仓库并进入示例目录
+2. 配置 `.env` 文件添加 API 密钥
+3. 运行 `npm install` 安装依赖
+4. 执行 `npm run start` 启动代理
+5. 在命令行界面输入提示词与代理交互
+6. 退出时自动清理沙箱资源
+
+---
+
+### 示例 2：两代理编码系统（服务连接沙箱）
+
+> 文档链接：https://www.daytona.io/docs/en/claude-agent-sdk-connect-service-sandbox/
+
+**功能概述**
+
+基于 Claude Agent SDK 和 Daytona 沙箱的自主编码框架，由两个协作代理组成：
+
+| 代理 | 运行位置 | 职责 | 模型 |
+|------|----------|------|------|
+| **项目经理代理** | 本地 | 高层规划和任务委派 | `claude-sonnet-4-20250514` |
+| **开发者代理** | 沙箱 | 执行编码任务 | Claude Code |
+
+这种架构将高层规划与低层代码执行分离，实现更强大的自动化。
+
+**环境变量配置**
+
+```bash
+DAYTONA_API_KEY=your-daytona-api-key           # 从 Daytona 仪表板获取
+ANTHROPIC_API_KEY=your-api-key                 # 项目经理代理所需
+SANDBOX_ANTHROPIC_API_KEY=your-api-key         # 可选，用于开发者代理
+```
+
+**系统要求**
+
+- Node.js 18 或更新版本
+
+**核心代码示例**
+
+```typescript
+// 开发者代理执行任务
+const result = await sandbox.codeInterpreter.runCode(
+  `coding_agent.run_query_sync(os.environ.get('PROMPT', ''))`,
+  { context: ctx, envs: { PROMPT: task } }
+);
+```
+
+项目经理代理使用 `<developer_task>` 标签进行任务委派，系统解析这些标签并调用开发者代理。
+
+**使用步骤**
+
+1. 克隆仓库：`git clone https://github.com/daytonaio/daytona.git`
+2. 配置环境：复制 `.env.example` 到 `.env` 并填入 API 密钥
+3. 安装依赖：`npm install`
+4. 启动系统：`npm run start`
+5. 通过终端提示与项目经理代理交互，系统自动处理委派和执行
+6. 退出程序时，沙箱自动清理
+
+---
+
+### 示例 3：运行任务并流式输出日志
+
+> 文档链接：https://www.daytona.io/docs/en/claude-code-run-tasks-stream-logs-sandbox/
+
+**功能概述**
+
+在 Daytona 隔离沙箱中运行 Claude Code，核心目的是"自动化和编排任务，使用自然语言和代码"，同时在安全的隔离环境中执行这些操作。
+
+**环境变量配置**
+
+```bash
+ANTHROPIC_API_KEY=your-api-key
+```
+
+**命令标志**
+
+- `--dangerously-skip-permissions`：跳过权限检查
+- `--output-format stream-json`：流式 JSON 输出
+- `--verbose`：详细输出
+
+**Python 示例**
+
+```python
+from daytona import AsyncDaytona
+
+async def main():
+    async with AsyncDaytona() as daytona:
+        # 创建沙箱
+        sandbox = await daytona.create()
+
+        # 安装 Claude Code
+        await sandbox.process.exec("npm install -g @anthropic-ai/claude-code")
+
+        # 创建 PTY 会话并执行命令
+        pty = await sandbox.process.create_pty()
+        await pty.send(f"ANTHROPIC_API_KEY={api_key} claude --dangerously-skip-permissions --output-format stream-json --verbose 'your prompt here'\n")
+
+        # 处理流式输出
+        async for data in pty.on_data():
+            print(data, end="")
+
+        # 清理
+        await daytona.delete(sandbox)
+```
+
+**TypeScript 示例**
+
+```typescript
+import { Daytona } from '@daytona/sdk';
+
+async function main() {
+    const daytona = new Daytona();
+    const sandbox = await daytona.create();
+
+    // 安装 Claude Code
+    await sandbox.process.exec("npm install -g @anthropic-ai/claude-code");
+
+    // 创建 PTY 并配置回调
+    const pty = await sandbox.process.createPty({
+        onData: (data) => process.stdout.write(data)
+    });
+
+    // 发送命令
+    await pty.send(`ANTHROPIC_API_KEY=${apiKey} claude --dangerously-skip-permissions "your prompt"\n`);
+
+    // 等待完成后清理
+    await daytona.delete(sandbox);
+}
+```
+
+**使用步骤**
+
+1. 创建沙箱实例
+2. 安装 Claude Code 工具
+3. 建立 PTY 会话连接
+4. 执行 Claude 命令
+5. 处理流式输出
+6. 清理资源（删除沙箱）
+
+---
+
+### Daytona + Claude Code 集成总结
+
+| 特性 | 说明 |
+|------|------|
+| **自定义镜像** | 支持通过 `CreateSandboxParams.image` 指定自定义 Docker 镜像 |
+| **环境变量** | 支持通过 `env_vars` 传递 API 密钥等配置 |
+| **PTY 支持** | 支持伪终端，可运行交互式 CLI 工具 |
+| **流式输出** | 支持实时流式输出日志 |
+| **自动清理** | 退出时自动清理沙箱资源 |
+
+**关键发现：Daytona 可以内置 Claude Code CLI**
+
+通过以下方式实现：
+
+1. **运行时安装**：在沙箱创建后通过 `npm install -g @anthropic-ai/claude-code` 安装
+2. **自定义镜像**：构建预装 Claude Code 的 Docker 镜像
+3. **PTY 会话**：使用 PTY 运行交互式 Claude Code CLI
+4. **环境变量**：通过 `ANTHROPIC_API_KEY` 传递认证信息
+
 ## 参考资料
 
 - [E2B 官方文档](https://e2b.dev/docs)
 - [Claude Agent SDK 文档](https://platform.claude.com/docs/agent-sdk)
 - [沙箱方案对比](./SANDBOX_COMPARISON.md)
+- [Daytona 官方文档](https://www.daytona.io/docs)
+- [Daytona + Claude Agent SDK 交互式终端](https://www.daytona.io/docs/en/claude-agent-sdk-interactive-terminal-sandbox/)
+- [Daytona + Claude Agent SDK 服务连接](https://www.daytona.io/docs/en/claude-agent-sdk-connect-service-sandbox/)
+- [Daytona + Claude Code 流式日志](https://www.daytona.io/docs/en/claude-code-run-tasks-stream-logs-sandbox/)
